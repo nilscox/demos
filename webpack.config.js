@@ -17,6 +17,7 @@ module.exports = {
   output: {
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
   },
 
   resolve: {
@@ -33,6 +34,11 @@ module.exports = {
           target: 'es6',
         },
       },
+
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
     ],
   },
 
@@ -40,7 +46,6 @@ module.exports = {
     new HotModuleReplacementPlugin(),
     new ReactRefreshWebpackPlugin(),
     new EnvironmentPlugin(),
-    new ProvidePlugin({ React: 'react' }),
     new HtmlWebpackPlugin(),
   ],
 
@@ -48,5 +53,6 @@ module.exports = {
     host: HOST,
     port: Number(PORT),
     hot: true,
+    historyApiFallback: true,
   },
 };
