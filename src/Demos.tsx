@@ -15,7 +15,7 @@ type AppProps<D> = DemosConfig<D> & {
 
 export function App<D>({ demos, ...config }: AppProps<D>) {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={config.basename}>
       <ConfigProvider value={config as DemosConfig<unknown>}>
         <Demos demos={demos as DemosGroup<unknown>} />
       </ConfigProvider>

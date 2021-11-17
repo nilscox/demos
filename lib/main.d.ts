@@ -3,6 +3,7 @@ import React$1 from 'react';
 
 declare type DemosConfig<D> = {
     title?: React$1.ReactNode;
+    basename?: string;
     getDependencies?: () => D;
     Wrapper?: React$1.ComponentType<D>;
 };

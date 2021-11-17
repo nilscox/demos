@@ -2,6 +2,7 @@ import React, { createContext, useContext } from 'react';
 
 export type DemosConfig<D> = {
   title?: React.ReactNode;
+  basename?: string;
   getDependencies?: () => D;
   Wrapper?: React.ComponentType<D>;
 };
