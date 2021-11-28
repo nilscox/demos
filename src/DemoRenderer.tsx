@@ -3,11 +3,11 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useConfig } from './configContext';
 import { Demo } from './types';
 
-type DemoComponentProps = {
+type DemoRendererProps = {
   demo: Demo;
 };
 
-export const DemoComponent: React.FC<DemoComponentProps> = ({ demo }) => {
+export const DemoRenderer: React.FC<DemoRendererProps> = ({ demo }) => {
   const { getDependencies, Wrapper = NoopComponent } = useConfig();
 
   const { prepare, render: Demo } = demo;

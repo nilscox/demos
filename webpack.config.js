@@ -12,7 +12,7 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
 
-  entry: './src/index.dev.tsx',
+  entry: './src/example/index.tsx',
 
   output: {
     filename: '[name].[contenthash].js',

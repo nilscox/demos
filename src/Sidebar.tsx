@@ -1,17 +1,17 @@
 import React from 'react';
 
-import { Link, matchPath, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 import { useConfig } from './configContext';
-import { DemoGroupItems, DemosGroupProps } from './DemoGroupItems';
-import { DemosGroup } from './types';
+import { Demo } from './Demo';
+import { DemosGroup } from './DemoGroup';
 
 type SidebarProps = {
-  group: DemosGroup;
+  groups: DemosGroup[];
   setSearch: (search: string) => void;
 };
 
-export const Sidebar: React.FC<SidebarProps> = ({ group, setSearch }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ groups, setSearch }) => {
   const { title } = useConfig();
 
   return (
@@ -19,24 +19,33 @@ export const Sidebar: React.FC<SidebarProps> = ({ group, setSearch }) => {
       <h1 className="demos__sidebar__branding">
         <Link to="/">{title}</Link>
       </h1>
-      <input className="demos__sidebar__search" placeholder="Search..." onChange={(e) => setSearch(e.target.value)} />
-      <DemoGroupItems path={[]} group={group} Group={TreeGroup} />
+
+      <input
+        className="demos__sidebar__search"
+        placeholder="Search..."
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <Tree path={[]} items={groups} />
     </aside>
   );
 };
 
-const TreeGroup: React.FC<DemosGroupProps> = ({ group, path }) => {
-  const location = useLocation();
-
-  const pathname = ['', ...path].join('/');
-  const active = matchPath(location.pathname, { path: pathname, exact: true });
-
-  return (
-    <div className={`demos__tree__group depth-${path.length}`}>
-      <NavLink to={active ? '/' : pathname} className="demos__tree__group-name">
-        {path[path.length - 1]}
-      </NavLink>
-      <DemoGroupItems group={group} path={path} Group={TreeGroup} />
-    </div>
-  );
+type TreeProps = {
+  path: string[];
+  items: Array<DemosGroup | Demo>;
 };
+
+const Tree: React.FC<TreeProps> = ({ items, path }) => (
+  <>
+    {items.map((item) => (
+      <div key={item.label} className={`demos__tree__item depth-${path.length + 1}`}>
+        <NavLink to={['', ...path, item.label].join('/')} className="demos__tree__item-label">
+          {item.label}
+        </NavLink>
+
+        {DemosGroup.isDemoGroup(item) && <Tree path={[...path, item.label]} items={item.children} />}
+      </div>
+    ))}
+  </>
+);
