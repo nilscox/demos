@@ -1,33 +1,29 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 
 import { useConfig } from './configContext';
-import { Demo } from './types';
+import { Demo } from './Demo';
 
 type DemoRendererProps = {
-  demo: Demo;
+  demo: Demo<unknown>;
 };
 
 export const DemoRenderer: React.FC<DemoRendererProps> = ({ demo }) => {
-  const { getDependencies, Wrapper = NoopComponent } = useConfig();
+  const { configure = (props: unknown) => props, Wrapper = NoopComponent } = useConfig();
 
-  const { prepare, render: Demo } = demo;
   const [ready, setReady] = useState(false);
 
-  const deps = useMemo(() => getDependencies?.() ?? {}, [getDependencies]);
+  const props = useRef(configure(undefined));
 
   useEffect(() => {
     (async () => {
-      if (deps) {
-        await prepare?.(deps);
-      }
-
+      props.current = await demo.configure?.(props.current);
       setReady(true);
     })();
-  }, [deps, prepare]);
+  }, [props, demo, configure]);
 
   return (
     <div className="demos__demo-component">
-      <Wrapper {...deps}>{ready && <Demo />}</Wrapper>
+      <Wrapper {...props.current}>{ready && demo.render(props.current)}</Wrapper>
     </div>
   );
 };

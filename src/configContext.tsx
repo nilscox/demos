@@ -1,15 +1,17 @@
 import React, { createContext, useContext } from 'react';
 
-export type DemosConfig<D = unknown> = {
+export type Configure<P> = (props: P) => P | Promise<P>;
+
+export type DemosConfig<P> = {
   title?: React.ReactNode;
   basename?: string;
-  getDependencies?: () => D;
-  Wrapper?: React.ComponentType<D>;
+  configure?: Configure<P>;
+  Wrapper?: React.ComponentType<P>;
 };
 
-const configContext = createContext<DemosConfig>({});
+const configContext = createContext<DemosConfig<unknown>>({});
 export const ConfigProvider = configContext.Provider;
 
-export function useConfig<D = unknown>() {
-  return useContext(configContext) as DemosConfig<D>;
+export function useConfig<P>() {
+  return useContext(configContext) as DemosConfig<P>;
 }

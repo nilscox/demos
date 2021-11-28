@@ -8,7 +8,7 @@ export const buttonDemo = new Demo('Button', {
   render: () => <Button>click me</Button>,
   variants: [
     {
-      description: 'button in disabled state',
+      description: 'A button in disabled state.',
       render: () => <Button disabled>{"don't click me"}</Button>,
     },
   ],

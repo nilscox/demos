@@ -4,25 +4,24 @@ import { BrowserRouter, useLocation } from 'react-router-dom';
 
 import { ConfigProvider, DemosConfig } from './configContext';
 import { DemosGroup } from './DemoGroup';
+import { DemoRenderer } from './DemoRenderer';
 import { DemosList } from './DemosList';
 import { Sidebar } from './Sidebar';
 
-type AppProps<D> = DemosConfig<D> & {
-  demos: DemosGroup[];
+type AppProps = DemosConfig<unknown> & {
+  demos: DemosGroup<any>[];
 };
 
-export function App<D>({ demos, ...config }: AppProps<D>) {
-  return (
-    <BrowserRouter basename={config.basename}>
-      <ConfigProvider value={config as DemosConfig<unknown>}>
-        <Demos groups={demos} />
-      </ConfigProvider>
-    </BrowserRouter>
-  );
-}
+export const App: React.FC<AppProps> = ({ demos, ...config }) => (
+  <BrowserRouter basename={config.basename}>
+    <ConfigProvider value={config}>
+      <Demos groups={demos} />
+    </ConfigProvider>
+  </BrowserRouter>
+);
 
 type DemosProps = {
-  groups: DemosGroup[];
+  groups: DemosGroup<unknown>[];
 };
 
 const Demos: React.FC<DemosProps> = ({ groups }) => {
@@ -30,7 +29,14 @@ const Demos: React.FC<DemosProps> = ({ groups }) => {
   const demoPath = new URLSearchParams(useLocation().search).get('demo-path');
 
   if (demoPath) {
-    return <>demo {demoPath}</>;
+    const path = demoPath.replace(/^\//, '').split('/');
+    const [demo] = groups.map((group) => group.findDemo(path)).filter(Boolean);
+
+    if (!demo) {
+      throw new Error(`demo not found, path=${demoPath}`);
+    }
+
+    return <DemoRenderer demo={demo} />;
   }
 
   return (

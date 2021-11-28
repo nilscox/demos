@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { Demo } from '../Demo';
 import { DemosGroup } from '../DemoGroup';
 import { Demos } from '../index';
 
@@ -13,14 +14,39 @@ import { signupFormDemo } from './forms/SignupForm.demo';
 
 import '../styles.css';
 
-const elementsDemosGroup = new DemosGroup('Elements', [
-  new DemosGroup('Typographies', [headingDemo, textDemo]),
-  buttonDemo,
-  inputDemo,
-]);
+type Config = {
+  foo: number;
+};
 
+const examples = new DemosGroup<Config>(
+  'Examples',
+  [
+    new Demo('Example1', {
+      render: ({ foo }) => <>example 1, foo = {foo}</>,
+    }),
+    new Demo('Example2', {
+      configure: (props) => ({
+        ...props,
+        foo: props.foo + 18,
+      }),
+      render: ({ foo }) => <>example 2, foo = {foo}</>,
+    }),
+  ],
+  (props) => ({
+    ...props,
+    foo: props.foo + 9,
+  }),
+);
+
+const typographiesDemosGroup = new DemosGroup('Typographies', [headingDemo, textDemo]);
+const elementsDemosGroup = new DemosGroup('Elements', [typographiesDemosGroup, buttonDemo, inputDemo]);
 const formsDemosGroup = new DemosGroup('Forms', [loginFormDemo, signupFormDemo]);
 
-const demos = [elementsDemosGroup, formsDemosGroup];
+const demos = [examples, elementsDemosGroup, formsDemosGroup];
 
-ReactDOM.render(<Demos title="Demos example" demos={demos} />, document.getElementById('app'));
+const configure = () => ({ foo: 42 });
+
+ReactDOM.render(
+  <Demos title="Demos example" demos={demos} configure={configure} />,
+  document.getElementById('app'),
+);
